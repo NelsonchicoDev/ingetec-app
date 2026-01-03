@@ -6,9 +6,14 @@ import bcrypt from "bcryptjs";
 // PUT: Editar un usuario existente
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  // CAMBIO 1: Definimos params como una Promesa
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // CAMBIO 2: Esperamos a que se resuelva la promesa para obtener el ID
+    const { id } = await params;
+    const userId = id;
+
     const session = await auth();
     // Verificamos permisos (Igual que antes)
     const userRole = (session?.user as unknown as { role: string })?.role;
@@ -18,7 +23,6 @@ export async function PUT(
 
     const body = await req.json();
     const { name, email, role, password } = body;
-    const userId = params.id;
 
     // Preparamos los datos a actualizar
     const updateData: any = {
@@ -49,9 +53,14 @@ export async function PUT(
 // DELETE: Eliminar un usuario
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  // CAMBIO 1: Definimos params como una Promesa
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // CAMBIO 2: Esperamos a que se resuelva la promesa para obtener el ID
+    const { id } = await params;
+    const userIdToDelete = id;
+
     const session = await auth();
     const userRole = (session?.user as unknown as { role: string })?.role;
     const currentUserId = session?.user?.id;
@@ -59,8 +68,6 @@ export async function DELETE(
     if (!session || (userRole !== "ADMIN" && userRole !== "SUPERADMIN")) {
       return NextResponse.json({ error: "No autorizado" }, { status: 403 });
     }
-
-    const userIdToDelete = params.id;
 
     // PROTECCIÓN: No permitas que te borres a ti mismo por accidente
     if (userIdToDelete === currentUserId) {
