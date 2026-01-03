@@ -1,3 +1,4 @@
+// Forzando despliegue nuevo en Vercel
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
