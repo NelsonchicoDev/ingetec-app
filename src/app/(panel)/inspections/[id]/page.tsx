@@ -283,7 +283,7 @@ export default function InspectionRunnerPage() {
                                     {q.type === 'TEXT' && (
                                         <textarea
                                             className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50 focus:bg-white"
-                                            value={q.answer || ''}
+                                            value={typeof q.answer === 'string' ? q.answer : ''}
                                             onChange={(e) => handleAnswerChange(section.id, q.id, e.target.value)}
                                             placeholder="Escribir observación..."
                                             rows={2}
