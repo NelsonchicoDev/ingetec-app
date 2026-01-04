@@ -26,7 +26,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
-
           const user = await prisma.user.findUnique({ where: { email } });
 
           if (!user) return null;
@@ -35,9 +34,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             password,
             user.password || ""
           );
-          if (!passwordsMatch) return null;
 
-          return user;
+          if (passwordsMatch) {
+            // --- AQUÍ ESTÁ EL CAMBIO ---
+            // No devuelvas 'user' directo. Crea un objeto nuevo.
+            return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              // Convertimos null a undefined usando '?? undefined'
+              image: user.image ?? undefined,
+              role: user.role ?? undefined,
+              // Cualquier otro campo opcional que tengas...
+            };
+          }
         }
 
         return null;
